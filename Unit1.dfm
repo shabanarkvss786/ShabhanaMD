@@ -158,7 +158,7 @@ object Form1: TForm1
     Left = 526
     Top = 170
     Width = 81
-    Height = 23
+    Height = 21
     Hint = 'Main Scheduled Interval in milliseconds'
     ParentShowHint = False
     ShowHint = True
@@ -168,7 +168,7 @@ object Form1: TForm1
     Left = 526
     Top = 352
     Width = 81
-    Height = 23
+    Height = 21
     Hint = 'Main Scheduled Interval'
     ParentShowHint = False
     ShowHint = True

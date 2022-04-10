@@ -125,7 +125,7 @@ begin
     BreakClass.setEndTime(EndTime.DateTime);
     BreakList.Add(BreakClass) ;
     BreakDataSet.DisableControls;
-    BreakDataSet.AppendRecord([Edit2.Text,FormatDateTime('hh:mm:ss',StartTime.DateTime),FormatDateTime('hh:mm:ss',EndTime.DateTime)]);
+    BreakDataSet.AppendRecord([Edit2.Text,FormatDateTime('hh:mm:ss',BreakSTime.DateTime),FormatDateTime('hh:mm:ss',BreakETime.DateTime)]);
     BreakDataSet.EnableControls;
   end
   else
@@ -166,17 +166,17 @@ end;
 procedure TForm1.UpdateChildInterval(Sender: TObject);
 begin
   if Edit4.Text <> '' then
-    FTimer.Interval := StrToint(Edit4.Text)
+    ChildTimer.Interval := StrToint(Edit4.Text)
   else
-    FTimer.Interval := 5*60*1000;
+    ChildTimer.Interval := 5*60*1000;
 end;
 
 procedure TForm1.UpdateMaininterval(Sender: TObject);
 begin
   if Edit3.Text <> '' then
-    ChildTimer.Interval := StrToint(Edit3.Text)
+    FTimer.Interval := StrToint(Edit3.Text)
   else
-    ChildTimer.Interval := 5*60*1000;
+    FTimer.Interval := 5*60*1000;
 end;
 
 procedure TClass.setTaskName(Value: String);
@@ -213,12 +213,11 @@ procedure TForm1.DeleteBreak(Sender: TObject);
 var
   IndextoDel : Integer;
 begin
-  IndextoDel := MainDataSet.RecNo;
+  IndextoDel := BreakDataSet.RecNo;
   BreakDataSet.DisableControls;
   BreakDataSet.Delete;
   BreakDataSet.EnableControls;
   BreakList.Delete(IndextoDel - 1);
-
 end;
 
 procedure TForm1.DeleteTask(Sender: TObject);
@@ -230,7 +229,6 @@ begin
   MainDataSet.Delete;
   MainDataSet.EnableControls;
   TaskList.Delete(IndextoDel - 1);
-  SortMainTasks;
 end;
 
 procedure TForm1.Edit1Exit(Sender: TObject);
@@ -400,13 +398,12 @@ begin
         if officeStart then
         begin
           ChildTimer.OnTimer := aThread.ChildTrayNotification;
-          if Edit2.Text <> '' then
-             ChildTimer.Interval := StrToint(Edit2.Text)
+          if Edit4.Text <> '' then
+             ChildTimer.Interval := StrToint(Edit4.Text)
           else
-            ChildTimer.Interval := 5*60*1000;
+            ChildTimer.Interval := 60*1000;
           ChildTimer.Enabled := True;
           aThread.Start;
-          aThread.Execute;
         end;
       end
       else if(ContainsText(UpperCase(TaskList[I].TaskName), UpperCase('Office'))) and (STime <= SYSTime ) and (ETime <= SYSTime ) and (officeStart) then
@@ -458,6 +455,19 @@ begin
       end;
       CloseFile(FileObj);
    end;
+   FileName := 'BreakList';
+   if(BreakList.Count > 0)then
+   begin
+      AssignFile(FileObj,FileName);
+      ReWrite(FileObj);
+      for i := 0 to BreakList.Count - 1 do
+      begin
+        Write(FileObj, TBreakClass(BreakList[i]).TaskName + ' ' + FormatDateTime('hh:mm:ss',TBreakClass(BreakList[i]).StartTime) + ' '
+        + FormatDateTime('hh:mm:ss',TBreakClass(BreakList[i]).EndTime));
+          WriteLn(FileObj);
+      end;
+      CloseFile(FileObj);
+   end;
 end;
 
 procedure TForm1.SortMainTasks();
@@ -491,7 +501,7 @@ end;
 
 procedure TNotification.Execute;
 begin
- ChildTrayNotification(self);
+
 end;
 
 procedure TNotification.ChildTrayNotification(Sender: TObject);
@@ -501,6 +511,8 @@ STime , ETime: TTime;
 SYSTime : TTime;
 FBreakName : string;
 SplitDelimeteredString : TArray<String>;
+begin
+if Assigned(BreakList) then
 begin
   for I := BreakList.Count - 1 Downto 0 do
     begin
@@ -525,6 +537,7 @@ begin
         Form1.TrayIcon1.ShowBalloonHint;
         end
     end;
+end;
 end;
 
 end.
