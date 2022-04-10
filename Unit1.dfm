@@ -1,7 +1,7 @@
 object Form1: TForm1
   Left = 0
   Top = 0
-  Caption = 'Contact Details'
+  Caption = 'Scheduler'
   ClientHeight = 466
   ClientWidth = 800
   Color = clBtnFace
@@ -19,7 +19,7 @@ object Form1: TForm1
   object DBGrid1: TDBGrid
     Left = 24
     Top = 8
-    Width = 649
+    Width = 689
     Height = 145
     DataSource = DataSource1
     ReadOnly = True
@@ -31,7 +31,7 @@ object Form1: TForm1
     TitleFont.Style = []
   end
   object Button1: TButton
-    Left = 405
+    Left = 336
     Top = 168
     Width = 89
     Height = 25
@@ -40,9 +40,9 @@ object Form1: TForm1
     OnClick = AddTask
   end
   object EndTime: TDateTimePicker
-    Left = 278
+    Left = 239
     Top = 170
-    Width = 121
+    Width = 91
     Height = 21
     Hint = 'EndTime'
     Date = 44585.783059270830000000
@@ -64,7 +64,7 @@ object Form1: TForm1
     OnExit = Edit1Exit
   end
   object Button2: TButton
-    Left = 500
+    Left = 431
     Top = 168
     Width = 89
     Height = 25
@@ -75,7 +75,7 @@ object Form1: TForm1
   object StartTime: TDateTimePicker
     Left = 151
     Top = 170
-    Width = 121
+    Width = 82
     Height = 21
     Hint = 'StartTime'
     Date = 44585.783059270830000000
@@ -85,23 +85,14 @@ object Form1: TForm1
     ShowHint = True
     TabOrder = 5
   end
-  object Schedule: TButton
-    Left = 595
-    Top = 168
-    Width = 75
-    Height = 25
-    Caption = 'Schedule'
-    TabOrder = 6
-    OnClick = ScheduleClick
-  end
   object DBGrid2: TDBGrid
     Left = 24
     Top = 199
-    Width = 649
+    Width = 689
     Height = 145
     DataSource = DataSource2
     ReadOnly = True
-    TabOrder = 7
+    TabOrder = 6
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
     TitleFont.Height = -11
@@ -116,13 +107,13 @@ object Form1: TForm1
     Hint = 'TASKName'
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 8
+    TabOrder = 7
     OnExit = Edit2Exit
   end
   object BreakSTime: TDateTimePicker
     Left = 151
     Top = 350
-    Width = 121
+    Width = 82
     Height = 21
     Hint = 'BreakSTime'
     Date = 44585.783059270830000000
@@ -130,12 +121,12 @@ object Form1: TForm1
     Kind = dtkTime
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 9
+    TabOrder = 8
   end
   object BreakETime: TDateTimePicker
-    Left = 278
+    Left = 239
     Top = 350
-    Width = 121
+    Width = 91
     Height = 21
     Hint = 'BreakETime'
     Date = 44585.783059270830000000
@@ -143,25 +134,63 @@ object Form1: TForm1
     Kind = dtkTime
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 10
+    TabOrder = 9
   end
   object Button3: TButton
-    Left = 405
-    Top = 348
+    Left = 336
+    Top = 350
     Width = 89
     Height = 25
     Caption = 'Add Break'
-    TabOrder = 11
+    TabOrder = 10
     OnClick = AddBreak
   end
   object Button4: TButton
-    Left = 500
+    Left = 431
     Top = 350
     Width = 89
     Height = 25
     Caption = 'Delete Break'
-    TabOrder = 12
+    TabOrder = 11
     OnClick = DeleteBreak
+  end
+  object Edit3: TEdit
+    Left = 526
+    Top = 170
+    Width = 81
+    Height = 23
+    Hint = 'Main Scheduled Interval in milliseconds'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 12
+  end
+  object Edit4: TEdit
+    Left = 526
+    Top = 352
+    Width = 81
+    Height = 23
+    Hint = 'Main Scheduled Interval'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 13
+  end
+  object Button5: TButton
+    Left = 613
+    Top = 168
+    Width = 100
+    Height = 25
+    Caption = 'UpdateMainInterval'
+    TabOrder = 14
+    OnClick = UpdateMaininterval
+  end
+  object Button6: TButton
+    Left = 613
+    Top = 350
+    Width = 100
+    Height = 25
+    Caption = 'UpdateChildInterval'
+    TabOrder = 15
+    OnClick = UpdateChildInterval
   end
   object DataSource1: TDataSource
     DataSet = MainDataSet
@@ -174,7 +203,7 @@ object Form1: TForm1
       item
         Name = 'Task Name'
         DataType = ftString
-        Size = 20
+        Size = 50
       end
       item
         Name = 'StartTime'
@@ -214,7 +243,7 @@ object Form1: TForm1
       item
         Name = 'Break Name'
         DataType = ftString
-        Size = 20
+        Size = 50
       end
       item
         Name = 'StartTime'

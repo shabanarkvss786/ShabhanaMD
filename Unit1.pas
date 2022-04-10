@@ -18,7 +18,6 @@ type
     MainDataSet: TClientDataSet;
     Button2: TButton;
     StartTime: TDateTimePicker;
-    Schedule: TButton;
     TrayIcon1: TTrayIcon;
     FTimer : TTimer;
     ChildTimer: TTimer;
@@ -30,6 +29,10 @@ type
     BreakETime: TDateTimePicker;
     Button3: TButton;
     Button4: TButton;
+    Edit3: TEdit;
+    Edit4: TEdit;
+    Button5: TButton;
+    Button6: TButton;
     procedure AddTask(Sender: TObject);
     procedure AddBreak(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -40,9 +43,11 @@ type
     procedure Edit2Exit(Sender: TObject);
     procedure DeleteTask(Sender: TObject);
     procedure DeleteBreak(Sender: TObject);
-    procedure ScheduleClick(Sender: TObject);
+    procedure SortMainTasks();
     procedure OnTimer(Sender: TObject);
     procedure TrayNotification();
+    procedure UpdateMaininterval(Sender: TObject);
+    procedure UpdateChildInterval(Sender: TObject);
   private
     { Private declarations }
   public
@@ -154,8 +159,24 @@ begin
   end
   else
     showmessage('missing the one of the parameters to enter');
-  
+  SortMainTasks;
 
+end;
+
+procedure TForm1.UpdateChildInterval(Sender: TObject);
+begin
+  if Edit4.Text <> '' then
+    FTimer.Interval := StrToint(Edit4.Text)
+  else
+    FTimer.Interval := 5*60*1000;
+end;
+
+procedure TForm1.UpdateMaininterval(Sender: TObject);
+begin
+  if Edit3.Text <> '' then
+    ChildTimer.Interval := StrToint(Edit3.Text)
+  else
+    ChildTimer.Interval := 5*60*1000;
 end;
 
 procedure TClass.setTaskName(Value: String);
@@ -209,6 +230,7 @@ begin
   MainDataSet.Delete;
   MainDataSet.EnableControls;
   TaskList.Delete(IndextoDel - 1);
+  SortMainTasks;
 end;
 
 procedure TForm1.Edit1Exit(Sender: TObject);
@@ -267,6 +289,7 @@ begin
     DBGrid2.Columns[1].Font.Style := [fsBold];
     DBGrid2.Columns[2].Font.Color := clBlue;
     DBGrid2.Columns[2].Font.Style := [fsBold];
+    SortMainTasks;
 end;
 
 procedure TForm1.LoadData;
@@ -377,11 +400,20 @@ begin
         if officeStart then
         begin
           ChildTimer.OnTimer := aThread.ChildTrayNotification;
-          ChildTimer.Interval := 60*1000;
+          if Edit2.Text <> '' then
+             ChildTimer.Interval := StrToint(Edit2.Text)
+          else
+            ChildTimer.Interval := 5*60*1000;
           ChildTimer.Enabled := True;
           aThread.Start;
           aThread.Execute;
         end;
+      end
+      else if(ContainsText(UpperCase(TaskList[I].TaskName), UpperCase('Office'))) and (STime <= SYSTime ) and (ETime <= SYSTime ) and (officeStart) then
+      begin
+        aThread.Suspended := false;
+        ChildTimer.Enabled := false;
+        officeStart := false;
       end
       else
       begin
@@ -428,9 +460,9 @@ begin
    end;
 end;
 
-procedure TForm1.ScheduleClick(Sender: TObject);
+procedure TForm1.SortMainTasks();
 begin
-   if(TaskList.Count > 0) then
+if(TaskList.Count > 0) then
    begin
       TaskList.Sort(TComparer<TClass>.Construct(
       function (const L, R: TClass): integer
